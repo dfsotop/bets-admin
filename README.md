@@ -41,5 +41,6 @@ Furthermore, every transaction must contain a valid `playerId`
 - The read is done over a denormalized view. 
 The intention is not design a Relational DataBase, but an API able to deal scalability and multiple parallel requests
 - The persistence is delegated on the Axon Server, but the domain design can work potentially on any E/R DB Engine
-- Tests are included for several Classes. The focus of this PoC is not Unit Tests
+- Tests are included for the most crucial Classes. This PoC is not focused in Unit Tests, 
+but in the architecture designing.
 

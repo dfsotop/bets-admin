@@ -9,10 +9,16 @@ import org.springframework.stereotype.Service;
 
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * Implementation of the contract PlayerService.
+ * This service uses the axon framework's commandGateway
+ * to propagate Player related events
+ */
 @Service
 @RequiredArgsConstructor
 public class PlayerServiceImpl implements PlayerService {
     private final CommandGateway commandGateway;
+
     @Override
     public CompletableFuture<RegisterPlayerDTO> registerPlayer(RegisterPlayerDTO dto) {
         return commandGateway.send(new RegisterPlayerCommand(dto.getPlayerId(), dto.getInitialBalance()));

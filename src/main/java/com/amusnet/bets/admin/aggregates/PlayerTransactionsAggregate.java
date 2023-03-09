@@ -4,7 +4,6 @@ import com.amusnet.bets.admin.commands.RegisterBetCommand;
 import com.amusnet.bets.admin.commands.RegisterPlayerCommand;
 import com.amusnet.bets.admin.controllers.dto.RegisterBetResponseDto;
 import com.amusnet.bets.admin.events.BetRegisteredEvent;
-import com.amusnet.bets.admin.events.Event;
 import com.amusnet.bets.admin.events.PlayerRegisteredEvent;
 import com.amusnet.bets.admin.exceptions.MalformedBetException;
 import com.amusnet.bets.admin.utilities.BetEngine;
@@ -14,16 +13,15 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.axonframework.commandhandling.CommandHandler;
 import org.axonframework.eventsourcing.EventSourcingHandler;
+import org.axonframework.eventsourcing.eventstore.EventStore;
 import org.axonframework.modelling.command.AggregateIdentifier;
 import org.axonframework.modelling.command.AggregateMember;
 import org.axonframework.spring.stereotype.Aggregate;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import static org.axonframework.modelling.command.AggregateLifecycle.*;
+import static org.axonframework.modelling.command.AggregateLifecycle.apply;
 
 
 @AllArgsConstructor
@@ -40,7 +38,7 @@ public class PlayerTransactionsAggregate {
     private float balance;
 
     @CommandHandler
-    public PlayerTransactionsAggregate(RegisterPlayerCommand command) {
+    public PlayerTransactionsAggregate(RegisterPlayerCommand command) throws MalformedBetException {
         apply(new PlayerRegisteredEvent(command.getPlayerId(), command.getInitialBalance()));
     }
 
@@ -53,7 +51,7 @@ public class PlayerTransactionsAggregate {
 
     @CommandHandler
     public RegisterBetResponseDto handle(RegisterBetCommand command) throws MalformedBetException {
-        if (transactions.containsKey(command.getGameActivityId())){
+        if (transactions.containsKey(command.getGameActivityId())) {
             throw new MalformedBetException("transaction already registered", command.getGameActivityId());
         }
         BetOutcome outcome = BetEngine.nextBetResult();
